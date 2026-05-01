@@ -1,0 +1,139 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Space Grotesk', sans-serif;
+  background: #0a0a0f;
+  color: #d4d4e8;
+  min-height: 100vh;
+}
+
+/* ── Navbar ── */
+.navbar {
+  background: #111118;
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.07);
+  padding: 0 2rem;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar h1 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  background: linear-gradient(100deg, #c084fc, #38bdf8, #f472b6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+#logoutBtn {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  background: transparent;
+  border: 0.5px solid rgba(248, 113, 113, 0.35);
+  color: #f87171;
+  padding: 7px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease;
+}
+
+#logoutBtn:hover {
+  background: rgba(248, 113, 113, 0.1);
+}
+
+#logoutBtn:active {
+  transform: scale(0.97);
+}
+
+/* ── Main container ── */
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem;
+}
+
+.container h2 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: #3d3d55;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin-bottom: 1.5rem;
+}
+
+/* ── User grid ── */
+.user-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+/* ── Each card div injected by JS ── */
+.user-list > div {
+  background: #111118;
+  border-radius: 18px;
+  padding: 1.6rem;
+  border-top: 2px solid #c084fc;
+  border-left: 0.5px solid rgba(255, 255, 255, 0.06);
+  border-right: 0.5px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.06);
+  min-width: 0;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+/* cycle accent colours — no JS needed */
+.user-list > div:nth-child(3n + 1) { border-top-color: #c084fc; } /* violet */
+.user-list > div:nth-child(3n + 2) { border-top-color: #38bdf8; } /* sky    */
+.user-list > div:nth-child(3n + 3) { border-top-color: #f472b6; } /* pink   */
+
+/* ── Each <p> row ── */
+.user-list > div p {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14.5px;
+  color: #6b6b8a;
+  padding: 9px 0;
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  line-height: 1.5;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
+
+.user-list > div p:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+/* ── Labels (the <strong> tags your JS creates) ── */
+.user-list > div p strong {
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #9090b0;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-width: 80px;
+}

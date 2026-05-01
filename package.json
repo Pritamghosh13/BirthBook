@@ -1,0 +1,27 @@
+{
+  "name": "birthbook",
+  "version": "1.0.0",
+  "description": "a website to store friends DOB",
+  "license": "ISC",
+  "author": "Pritam Ghosh",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cloudinary": "^2.10.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.4.1",
+    "node-cron": "^4.2.1",
+    "nodemailer": "^8.0.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
