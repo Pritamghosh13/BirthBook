@@ -49,7 +49,20 @@ const userSchema = new mongoose.Schema({
     isVerified: {
         type: Boolean,
         default: false,
+    },
+
+    profile_image: {
+        type: String,
+        default: ""
+    },
+
+    public_id: {
+        type: String,
+        default: ""
+
     }
+
+
 
 },
 {timestamps: true})

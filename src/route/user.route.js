@@ -1,7 +1,8 @@
 import { Router } from "express";
-import { registerUser, userDetails, userLogin, userLogout } from "../controllers/user.controllers.js";
+import { registerUser, userDetails, userLogin, userLogout, uploadProfileImage } from "../controllers/user.controllers.js";
 import { verifyJWT } from "../middleWare/auth.middleware.js";
 import { sendOtp, verifyOtp } from "../controllers/otp.controllers.js";
+import { upload } from "../middleWare/multer.middleware.js";
 
 
 const router = Router()
@@ -23,6 +24,9 @@ router.route("/userinfo").get(userDetails)
 router.route("/sendotp").post(sendOtp)
 
 router.route("/verifyotp").post(verifyOtp)
+
+
+router.route("/profile/upload").post(verifyJWT, upload.single("profilePic"), uploadProfileImage)
 
 
 export {router}

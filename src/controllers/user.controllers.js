@@ -7,6 +7,7 @@ import nodemailer from "nodemailer"
 import dotenv from "dotenv";
 import { sendWelcomeEmail } from "../mailer/mailService.js";
 import cookieParser from "cookie-parser";
+import { uploadOnCloudinary } from "../utilis/cloudinary.js";
 
 dotenv.config({
     path: './.env'
@@ -249,6 +250,50 @@ const userDetails = asyncHandler(async(req, res) => {
 
 
 
+//Upload profile_image
+
+const uploadProfileImage = asyncHandler(async(req, res) => {
+    try {
+        const localFilePath = req.file?.path;
+
+        if(!localFilePath){
+            throw new ApiError(400, "File is required");
+        }
+
+        //upload on cloudinary
+        const result = await uploadOnCloudinary(localFilePath)
+
+        if(!result){
+            throw new ApiError(500, "Image upload failed");
+        }
+
+        // console.log(result.url);
+        // console.log(result.public_id);
+        
+
+        //save url in DB.
+        const user = await User.findByIdAndUpdate(
+            req.user._id,
+            {
+                $set: {
+                    profile_image: result.url,
+                public_id: result.public_id
+                }
+            },
+            {
+                new: true
+            }
+        )
+
+        return res.status(200)
+        .json(new ApiResponse(200, {}, "Image uploaded Successfully"))
+
+    } catch (error) {
+        
+    }
+})
+
+
 //sending mail to user
 // const send_mail_to_user = asyncHandler(async (req, res) => {
 //     try {
@@ -279,6 +324,7 @@ export {registerUser,
     refreshAccessToken,
     userDetails,
     // send_mail_to_user,
+    uploadProfileImage
 
 
 }
