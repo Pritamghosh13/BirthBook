@@ -294,25 +294,7 @@ const uploadProfileImage = asyncHandler(async(req, res) => {
 })
 
 
-//sending mail to user
-// const send_mail_to_user = asyncHandler(async (req, res) => {
-//     try {
-//     const mailOptions = {
-//       from: process.env.EMAIL_USER,
-//       to: "curlyhair12y@gmail.com",
-//       subject: "⏳ BirthBook is Coming Soon! Get Ready",
-//       text: "Hey there!\n\nSomething exciting is on the way 🎉\n\nBirthBook is being built to help you track birthdays and never miss special moments 🎂\n\nWe’re almost ready 🚀\n\n👉 Get ready to register as soon as we launch!\n\nStay tuned 💙\n\n- BirthBook Team",
-//     };
 
-//     const info = await transporter.sendMail(mailOptions);
-//     console.log(info);
-    
-//     res.send("Email sent: " + info.response);
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send("Error sending email");
-//   }
-// })
 
 
 
