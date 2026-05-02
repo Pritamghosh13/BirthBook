@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { registerUser, userDetails, userLogin, userLogout, uploadProfileImage, deleteProfileImage, changePassword, forgetUserPassword } from "../controllers/user.controllers.js";
+import { registerUser, userDetails, userLogin, userLogout, uploadProfileImage, deleteProfileImage, changePassword, forgetUserPassword, deleteUserAccount } from "../controllers/user.controllers.js";
 import { verifyJWT } from "../middleWare/auth.middleware.js";
 import { sendOtp, verifyOtp } from "../controllers/otp.controllers.js";
 import { upload } from "../middleWare/multer.middleware.js";
@@ -33,7 +33,9 @@ router.route("/profile/delete-image").delete(verifyJWT, deleteProfileImage)
 
 router.route("/change-pass").post(verifyJWT, changePassword)
 
-router.route("/forgot-pass").post(verifyJWT, forgetUserPassword)
+router.route("/forgot-pass").post( forgetUserPassword)
+
+router.route("/delete/account").post(verifyJWT, deleteUserAccount)
 
 
 export {router}

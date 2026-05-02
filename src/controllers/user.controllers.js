@@ -306,7 +306,7 @@ const uploadProfileImage = asyncHandler(async(req, res) => {
 
 
 
-<<<<<<< HEAD
+
 //delete profile_image
 const deleteProfileImage = asyncHandler(async (req, res) => {
     const user = await User.findById(req.user._id)
@@ -356,8 +356,7 @@ const changePassword = asyncHandler(async (req, res) => {
 
     await user.save()
     
-=======
->>>>>>> e3b295dbe4685ab3b5f4beac3e28ec89e186a062
+
 
     return res.status(200)
     .json(new ApiResponse(200, {}, "passeword changed successfully"))
@@ -369,7 +368,7 @@ const changePassword = asyncHandler(async (req, res) => {
 //forgot password
 const forgetUserPassword = asyncHandler(async (req, res) => {
 
-    const { newPassword, confirmNewPassword} = req.body;
+    const {email, newPassword, confirmNewPassword} = req.body;
 
     if (
         [newPassword, confirmNewPassword].some((field) =>!field || field?.trim() ==="")
@@ -383,7 +382,7 @@ const forgetUserPassword = asyncHandler(async (req, res) => {
         throw new ApiError(400, "The password of confirmNewPassword and newPassword have to same.")
     }
 
-    const user = await User.findById(req.user._id)
+    const user = await User.findOne({email})
     if (!user) {
         throw new ApiError(404, "User not found");
     }
@@ -410,6 +409,26 @@ const forgetUserPassword = asyncHandler(async (req, res) => {
 
 
 
+//delete user account
+const deleteUserAccount = asyncHandler(async (req, res) => {
+    const id = req.user._id
+
+    if(!id){
+        throw new ApiError(404, "User not found")
+    }
+
+    const deletedAccount = await User.findByIdAndDelete(id);
+    if (!deletedAccount) {
+        throw new ApiError(404, "User not found or already deleted")
+    }
+
+    return res.status(200)
+    .json(new ApiResponse(200, {}, "User account deleted successfully"))
+
+})
+
+
+
 
 export {registerUser,
     userLogin,
@@ -420,7 +439,8 @@ export {registerUser,
     uploadProfileImage,
     deleteProfileImage,
     changePassword,
-    forgetUserPassword
+    forgetUserPassword,
+    deleteUserAccount
 
 
 }
