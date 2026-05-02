@@ -1,6 +1,6 @@
 import { v2 as cloudinary } from 'cloudinary'
 import fs from "fs"
-
+import { ApiError } from './apiError.js';
 cloudinary.config({ 
   cloud_name: process.env.MY_CLOUD_NAME, 
   api_key: process.env.MY_CLOUD_KEY, 
@@ -28,4 +28,19 @@ const uploadOnCloudinary = async (localFilePath) => {
 }
 
 
-export {uploadOnCloudinary}
+
+const deleteFromCloudinary = async(id) => {
+    if(!id){
+        throw new ApiError(400, "Id is Invalid")
+    }
+
+    await cloudinary.uploader.destroy(id);
+
+    return ;
+}
+
+export {
+    uploadOnCloudinary,
+    deleteFromCloudinary
+
+}

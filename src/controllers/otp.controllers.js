@@ -20,8 +20,8 @@ const sendOtp = asyncHandler(async (req, res) => {
     const user = await User.findOne({email})
 
 
-    if (user) {
-        throw new ApiError(409, "User with this email already exists");
+    if (!user) {
+        throw new ApiError(404, "User not found");
     }
 
     await Otp.deleteMany({email});  //deleting privious otp.
@@ -84,9 +84,9 @@ const verifyOtp = asyncHandler(async(req, res) => {
 
     await Otp.deleteOne({email});
 
-    await Otp.updateOne({email}, {
-        otpVerify: true
-    })
+    // await Otp.updateOne({email}, {
+    //     otpVerify: true
+    // })
 
     
     await User.updateOne({email}, {

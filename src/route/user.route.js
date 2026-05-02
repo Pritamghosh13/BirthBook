@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { registerUser, userDetails, userLogin, userLogout, uploadProfileImage } from "../controllers/user.controllers.js";
+import { registerUser, userDetails, userLogin, userLogout, uploadProfileImage, deleteProfileImage, changePassword, forgetUserPassword } from "../controllers/user.controllers.js";
 import { verifyJWT } from "../middleWare/auth.middleware.js";
 import { sendOtp, verifyOtp } from "../controllers/otp.controllers.js";
 import { upload } from "../middleWare/multer.middleware.js";
@@ -27,6 +27,13 @@ router.route("/verifyotp").post(verifyOtp)
 
 
 router.route("/profile/upload").post(verifyJWT, upload.single("profilePic"), uploadProfileImage)
+
+
+router.route("/profile/delete-image").delete(verifyJWT, deleteProfileImage)
+
+router.route("/change-pass").post(verifyJWT, changePassword)
+
+router.route("/forgot-pass").post(verifyJWT, forgetUserPassword)
 
 
 export {router}

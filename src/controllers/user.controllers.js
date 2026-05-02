@@ -7,7 +7,7 @@ import nodemailer from "nodemailer"
 import dotenv from "dotenv";
 import { sendWelcomeEmail } from "../mailer/mailService.js";
 import cookieParser from "cookie-parser";
-import { uploadOnCloudinary } from "../utilis/cloudinary.js";
+import { deleteFromCloudinary, uploadOnCloudinary } from "../utilis/cloudinary.js";
 
 dotenv.config({
     path: './.env'
@@ -251,13 +251,23 @@ const userDetails = asyncHandler(async(req, res) => {
 
 
 //Upload profile_image
-
 const uploadProfileImage = asyncHandler(async(req, res) => {
     try {
         const localFilePath = req.file?.path;
 
         if(!localFilePath){
             throw new ApiError(400, "File is required");
+        }
+
+        const theUser = await User.findById(req.user._id);
+
+        if(!theUser){
+            throw new ApiError(404, "User not found");
+        }
+
+        //delete the privious exsisting image. 
+        if(theUser.public_id){
+            await deleteFromCloudinary(theUser.public_id)
         }
 
         //upload on cloudinary
@@ -289,31 +299,111 @@ const uploadProfileImage = asyncHandler(async(req, res) => {
         .json(new ApiResponse(200, {}, "Image uploaded Successfully"))
 
     } catch (error) {
+        console.log(error);
         
     }
 })
 
 
-//sending mail to user
-// const send_mail_to_user = asyncHandler(async (req, res) => {
-//     try {
-//     const mailOptions = {
-//       from: process.env.EMAIL_USER,
-//       to: "curlyhair12y@gmail.com",
-//       subject: "⏳ BirthBook is Coming Soon! Get Ready",
-//       text: "Hey there!\n\nSomething exciting is on the way 🎉\n\nBirthBook is being built to help you track birthdays and never miss special moments 🎂\n\nWe’re almost ready 🚀\n\n👉 Get ready to register as soon as we launch!\n\nStay tuned 💙\n\n- BirthBook Team",
-//     };
 
-//     const info = await transporter.sendMail(mailOptions);
-//     console.log(info);
+//delete profile_image
+const deleteProfileImage = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user._id)
+
+    if (!user) {
+        throw new ApiError(400, "Not found the user")
+    }
+
+    if(user.public_id){
+        deleteFromCloudinary(user.public_id)
+    }
+
+    user.profile_image = "";
+    user.public_id = "";
+
+    await user.save()
+
+    return res.status(200)
+    .json(new ApiResponse(200, {}, "profile_image deleted successfully"))
+})
+
+
+//change the user account password.
+const changePassword = asyncHandler(async (req, res) => {
+    const {oldpassword, newPassword, confirmNewPassword} = req.body;
+
+    if (
+        [oldpassword, newPassword, confirmNewPassword].some((field) =>!field || field?.trim() ==="")
+    ) {
+        throw new ApiError(400, "All fields are required")
+    }
+
+    if(newPassword !== confirmNewPassword){
+        throw new ApiError(400, "The password of confirmNewPassword and newPassword have to same.")
+    }
+
+    const user = await User.findById(req.user._id);
+
+
+    const matchPassword = await user.isPasswordCorrect(oldpassword);
+
+    if(!matchPassword){
+        throw new ApiError(401, "Invalid user credentials");
+    }
+
+    user.password = newPassword;
+
+    await user.save()
     
-//     res.send("Email sent: " + info.response);
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send("Error sending email");
-//   }
-// })
 
+    return res.status(200)
+    .json(new ApiResponse(200, {}, "passeword changed successfully"))
+
+})
+
+
+
+//forgot password
+const forgetUserPassword = asyncHandler(async (req, res) => {
+
+    const { newPassword, confirmNewPassword} = req.body;
+
+    if (
+        [newPassword, confirmNewPassword].some((field) =>!field || field?.trim() ==="")
+    ) {
+        throw new ApiError(400, "All fields are required")
+    }
+
+
+
+    if(newPassword !== confirmNewPassword){
+        throw new ApiError(400, "The password of confirmNewPassword and newPassword have to same.")
+    }
+
+    const user = await User.findById(req.user._id)
+    if (!user) {
+        throw new ApiError(404, "User not found");
+    }
+
+    if(!user.isVerified){
+        throw new ApiError(400, "The user is not verified, otp verification needed");
+    }
+
+    user.password = newPassword;
+    user.isVerified = false;
+    
+
+    await user.save()
+
+
+    return res.status(200)
+    .json(new ApiResponse(200, {}, "password changed successfully"))
+
+
+
+
+
+})
 
 
 
@@ -324,7 +414,10 @@ export {registerUser,
     refreshAccessToken,
     userDetails,
     // send_mail_to_user,
-    uploadProfileImage
+    uploadProfileImage,
+    deleteProfileImage,
+    changePassword,
+    forgetUserPassword
 
 
 }
