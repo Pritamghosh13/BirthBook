@@ -306,6 +306,7 @@ const uploadProfileImage = asyncHandler(async(req, res) => {
 
 
 
+<<<<<<< HEAD
 //delete profile_image
 const deleteProfileImage = asyncHandler(async (req, res) => {
     const user = await User.findById(req.user._id)
@@ -355,6 +356,8 @@ const changePassword = asyncHandler(async (req, res) => {
 
     await user.save()
     
+=======
+>>>>>>> e3b295dbe4685ab3b5f4beac3e28ec89e186a062
 
     return res.status(200)
     .json(new ApiResponse(200, {}, "passeword changed successfully"))
