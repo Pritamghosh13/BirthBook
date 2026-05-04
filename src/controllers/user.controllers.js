@@ -126,10 +126,14 @@ const userLogin = asyncHandler(async(req, res) => {
 
     const loginUser = await User.findById(user._id).select("-password -refreshToken")
 
+    // console.log(accessToken, refreshAccessToken);
+    
 
     const options = {
     httpOnly: true,
-    secure: false,      
+    secure: false,
+    sameSite: "none",
+    path: "/"     
 };
 
     return res
@@ -235,7 +239,7 @@ const userDetails = asyncHandler(async(req, res) => {
         throw new ApiError(404, "User is not found");
     }
 
-    console.log(users);
+    // console.log(users);
 
     return res.status(200)
     .json(new ApiResponse(200, 

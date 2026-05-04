@@ -3,6 +3,7 @@ import { registerUser, userDetails, userLogin, userLogout, uploadProfileImage, d
 import { verifyJWT } from "../middleWare/auth.middleware.js";
 import { sendOtp, verifyOtp } from "../controllers/otp.controllers.js";
 import { upload } from "../middleWare/multer.middleware.js";
+import { getBirthInThisMonth } from "../controllers/birrth.controllers.js";
 
 
 const router = Router()
@@ -36,6 +37,12 @@ router.route("/change-pass").post(verifyJWT, changePassword)
 router.route("/forgot-pass").post( forgetUserPassword)
 
 router.route("/delete/account").post(verifyJWT, deleteUserAccount)
+
+
+router.route("/birth/month").get(verifyJWT, getBirthInThisMonth)
+
+
+
 
 
 export {router}

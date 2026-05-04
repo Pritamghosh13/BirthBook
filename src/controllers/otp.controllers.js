@@ -17,12 +17,12 @@ const sendOtp = asyncHandler(async (req, res) => {
         throw new ApiError(409, "Email not found");    
     }
 
-    const user = await User.findOne({email})
+    // const user = await User.findOne({email})
 
 
-    if (!user) {
-        throw new ApiError(404, "User not found");
-    }
+    // if (!user) {
+    //     throw new ApiError(404, "User not found");
+    // }
 
     await Otp.deleteMany({email});  //deleting privious otp.
 
