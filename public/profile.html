@@ -8,6 +8,15 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Quicksand:wght@500;600;700&family=Nunito:wght@800;900&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS Integration with Preflight Disabled -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      corePlugins: {
+        preflight: false,
+      }
+    }
+  </script>
 </head>
 <body>
 
@@ -140,6 +149,20 @@
       </section>
 
     </div>
+
+    <!-- Birthday Wish Wall Section -->
+    <section id="wishWallSection" class="hidden mt-8 mb-12">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold flex items-center gap-2 m-0 text-slate-100 font-outfit">Birthday Wish Wall 💌</h2>
+        <span class="bg-white/5 border border-white/10 text-slate-400 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full" id="wishWallCountTag">Wishes: 0</span>
+      </div>
+      <div id="wishWallContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="col-span-full text-center p-8 bg-[#161b2c] border border-dashed border-white/10 rounded-xl text-slate-500 font-semibold">
+          No birthday wishes yet. 🎈
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <footer>

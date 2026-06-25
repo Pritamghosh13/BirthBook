@@ -92,7 +92,9 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new ApiError(500, "Something went wrong while registering the user")
     }
 
-    // await sendWelcomeEmail(createdUser.email, createdUser.fullname)
+    await sendWelcomeEmail(createdUser.email, createdUser.fullname)
+
+
 
 
     return res.status(200)
@@ -388,7 +390,7 @@ const forgetUserPassword = asyncHandler(async (req, res) => {
 
     user.password = newPassword;
     user.isVerified = false;
-
+    user.refreshToken = "";
 
     await user.save()
 

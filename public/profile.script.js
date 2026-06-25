@@ -60,6 +60,7 @@ async function checkAuthentication() {
     currentUser = data.data;
 
     populateProfile();
+    checkBirthdayWishWall();
   } catch (err) {
     console.error("Auth check error:", err);
     window.location.href = "log_in.html";
@@ -305,6 +306,7 @@ async function refreshCurrentUserData() {
       const data = await res.json();
       currentUser = data.data;
       populateProfile();
+      checkBirthdayWishWall();
     }
   } catch (err) {
     console.error("Failed to refresh user context:", err);
@@ -334,3 +336,116 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
 
 // Start checks on load
 window.addEventListener("DOMContentLoaded", checkAuthentication);
+
+// ── WISH WALL SUPPORT FOR PROFILE ──
+function checkBirthdayWishWall() {
+  if (!currentUser || !currentUser.dob) return;
+
+  const today = new Date();
+  const dob = new Date(currentUser.dob);
+  
+  const isBirthday = dob.getDate() === today.getDate() && dob.getMonth() === today.getMonth();
+
+  const wishWallSection = document.getElementById("wishWallSection");
+  if (isBirthday) {
+    if (wishWallSection) {
+      wishWallSection.classList.remove("hidden");
+      loadWishWall();
+    }
+  } else {
+    if (wishWallSection) {
+      wishWallSection.classList.add("hidden");
+    }
+  }
+}
+
+// Helper: format relative time
+function formatTimeRelative(dateString) {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now - date;
+  const diffMins = Math.floor(diffMs / 60000);
+  
+  if (diffMins < 1) return "Just now";
+  if (diffMins < 60) return `${diffMins}m ago`;
+  
+  const diffHours = Math.floor(diffMins / 60);
+  if (diffHours < 24) return `${diffHours}h ago`;
+  
+  return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+// Helper: render a single wish card markup
+function createWishCardHtml(wish) {
+  const sender = wish.sender || {};
+  const senderName = sender.fullname || "Anonymous";
+  const initials = getInitials(senderName);
+  const gradient = getGradientForName(senderName);
+  const timestamp = wish.createdAt ? formatTimeRelative(wish.createdAt) : "Just now";
+
+  const avatarHtml = sender.profile_image
+    ? `<img src="${sender.profile_image}" alt="${senderName}" class="w-10 h-10 rounded-full object-cover flex-shrink-0">`
+    : `<div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0" style="background: ${gradient}; color: white;">${initials}</div>`;
+
+  return `
+    <div class="bg-[#161b2c] border border-white/5 rounded-xl p-4 flex gap-3 items-start hover:border-white/10 transition-all font-sans text-white">
+      ${avatarHtml}
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center justify-between gap-2">
+          <h4 class="font-bold text-slate-200 text-sm truncate m-0">${senderName}</h4>
+          <span class="text-[11px] text-slate-500 font-semibold flex-shrink-0">${timestamp}</span>
+        </div>
+        <p class="text-slate-300 text-sm mt-1 leading-relaxed break-words m-0">${wish.message}</p>
+      </div>
+    </div>
+  `;
+}
+
+// Load wishes from backend and render inside container
+async function loadWishWall() {
+  const container = document.getElementById("wishWallContainer");
+  const countSpan = document.getElementById("wishWallCountTag");
+
+  try {
+    const res = await fetch(`${API_BASE}/api/v1/users/wish/getAll`, {
+      method: "GET",
+      credentials: "include"
+    });
+
+    if (res.status === 400 || res.status === 404) {
+      container.innerHTML = `
+        <div class="col-span-full text-center p-8 bg-[#161b2c] border border-dashed border-white/10 rounded-xl text-slate-500 font-semibold">
+          No birthday wishes yet. 🎈
+        </div>
+      `;
+      countSpan.innerText = "Wishes: 0";
+      return;
+    }
+
+    if (!res.ok) throw new Error("Failed to load wishes");
+
+    const data = await res.json();
+    const wishes = data.data || [];
+
+    countSpan.innerText = `Wishes: ${wishes.length}`;
+
+    if (wishes.length === 0) {
+      container.innerHTML = `
+        <div class="col-span-full text-center p-8 bg-[#161b2c] border border-dashed border-white/10 rounded-xl text-slate-500 font-semibold">
+          No birthday wishes yet. 🎈
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = wishes.map(wish => createWishCardHtml(wish)).join("");
+
+  } catch (err) {
+    console.error("Wish wall loading error:", err);
+    container.innerHTML = `
+      <div class="col-span-full text-center p-8 bg-[#161b2c] border border-dashed border-red-500/20 rounded-xl text-red-400 font-semibold">
+        ⚠️ Failed to load your Wish Wall
+      </div>
+    `;
+  }
+}

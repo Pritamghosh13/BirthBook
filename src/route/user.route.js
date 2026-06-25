@@ -5,6 +5,7 @@ import { ApiResponse } from "../utilis/apiResponse.js";
 import { sendOtp, verifyOtp } from "../controllers/otp.controllers.js";
 import { upload } from "../middleWare/multer.middleware.js";
 import { getBirthInThisMonth } from "../controllers/birrth.controllers.js";
+import { getAllWishes, makeWish } from "../controllers/Birth_wish.controllers.js";
 
 
 const router = Router()
@@ -41,7 +42,7 @@ router.route("/profile/delete-image").delete(verifyJWT, deleteProfileImage)
 
 router.route("/change-pass").post(verifyJWT, changePassword)
 
-router.route("/forgot-pass").post( forgetUserPassword)
+router.route("/forgot-pass").post(forgetUserPassword)
 
 router.route("/delete/account").post(verifyJWT, deleteUserAccount)
 
@@ -49,7 +50,9 @@ router.route("/delete/account").post(verifyJWT, deleteUserAccount)
 router.route("/birth/month").get(verifyJWT, getBirthInThisMonth)
 
 
+router.route("/wish/add").post(verifyJWT , makeWish)
 
+router.route("/wish/getAll").get(verifyJWT, getAllWishes)
 
 
 export {router}

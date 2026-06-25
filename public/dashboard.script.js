@@ -77,6 +77,7 @@ async function checkAuthentication() {
     currentUser = data.data;
 
     setupWelcomeHero();
+    checkBirthdayWishWall();
     loadDashboardData();
   } catch (err) {
     console.error("Auth verification failed:", err);
@@ -269,6 +270,13 @@ function renderFriendsList(usersList) {
       ? new Date(user.dob).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
       : "Not set";
 
+    const isBdayToday = (days === 0 || days === 365);
+    const btnText = isBdayToday ? "Wish Happy Birthday 🎂" : "Not Today";
+    const disabledAttr = isBdayToday ? "" : "disabled";
+    const btnClass = isBdayToday 
+      ? "w-full mt-4 bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white font-semibold py-2.5 px-4 rounded-xl shadow-lg shadow-pink-500/20 hover:shadow-pink-500/40 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer border-none font-sans"
+      : "w-full mt-4 bg-slate-800/80 text-slate-500 font-semibold py-2.5 px-4 rounded-xl cursor-not-allowed border border-slate-700/50 flex items-center justify-center gap-2 font-sans";
+
     card.innerHTML = `
       <div class="days-badge ${badgeClass}">${badgeText}</div>
       <div class="friend-header">
@@ -278,18 +286,310 @@ function renderFriendsList(usersList) {
           <span class="dob">🎂 ${formattedDob}</span>
         </div>
       </div>
-      <div class="friend-body">
-        <div class="detail-row">
-          <strong>Email:</strong> ${user.email}
+      <div class="friend-body flex flex-col justify-between h-full">
+        <div>
+          <div class="detail-row">
+            <strong>Email:</strong> ${user.email}
+          </div>
+          ${user.phone_number ? `
+          <div class="detail-row">
+            <strong>Phone:</strong> ${user.phone_number}
+          </div>` : ""}
         </div>
-        ${user.phone_number ? `
-        <div class="detail-row">
-          <strong>Phone:</strong> ${user.phone_number}
-        </div>` : ""}
+        <button ${disabledAttr} class="${btnClass}" onclick="openWishModal('${user._id}', '${user.fullname.replace(/'/g, "\\'")}', '${user.profile_image || ''}')">
+          ${btnText}
+        </button>
       </div>
     `;
 
     grid.appendChild(card);
+  });
+}
+
+// ── TOAST NOTIFICATION ──
+function showToast(message, isError = false) {
+  const toast = document.getElementById("toast");
+  const toastMessage = document.getElementById("toastMessage");
+  const toastIcon = document.getElementById("toastIcon");
+
+  toastMessage.innerText = message;
+  if (isError) {
+    toastIcon.innerText = "❌";
+    toast.className = "fixed bottom-8 right-8 z-[2000] transition-all duration-300 ease-out bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-4 rounded-xl font-bold shadow-lg shadow-red-500/20 flex items-center gap-2 pointer-events-none translate-y-0 opacity-100";
+  } else {
+    toastIcon.innerText = "🎉";
+    toast.className = "fixed bottom-8 right-8 z-[2000] transition-all duration-300 ease-out bg-gradient-to-r from-[#10b981] to-[#059669] text-white px-6 py-4 rounded-xl font-bold shadow-lg shadow-emerald-500/20 flex items-center gap-2 pointer-events-none translate-y-0 opacity-100";
+  }
+
+  setTimeout(() => {
+    toast.className = "fixed bottom-8 right-8 z-[2000] transform translate-y-24 opacity-0 transition-all duration-300 ease-out bg-gradient-to-r from-[#10b981] to-[#059669] text-white px-6 py-4 rounded-xl font-bold shadow-lg shadow-emerald-500/20 flex items-center gap-2 pointer-events-none";
+  }, 4000);
+}
+
+// ── WISH MODAL CONTROLS ──
+function openWishModal(receiverId, friendName, profileImage) {
+  const modal = document.getElementById("wishModal");
+  const receiverInput = document.getElementById("modalReceiverId");
+  const title = document.getElementById("modalTitle");
+  const avatarContainer = document.getElementById("modalFriendAvatar");
+  const messageInput = document.getElementById("wishMessageInput");
+  const charCounter = document.getElementById("charCounter");
+
+  receiverInput.value = receiverId;
+  title.innerText = `Today is ${friendName}'s birthday! 🎉`;
+  messageInput.value = "";
+  charCounter.innerText = "0";
+
+  // Render friend avatar
+  const initials = getInitials(friendName);
+  const gradient = getGradientForName(friendName);
+  
+  if (profileImage) {
+    avatarContainer.innerHTML = `<img src="${profileImage}" alt="${friendName}" class="w-full h-full object-cover">`;
+  } else {
+    avatarContainer.style.background = gradient;
+    avatarContainer.style.color = "white";
+    avatarContainer.innerHTML = `<div class="flex items-center justify-center w-full h-full">${initials}</div>`;
+  }
+
+  // Open modal
+  modal.classList.remove("hidden");
+  modal.classList.add("flex");
+}
+
+function closeWishModal() {
+  const modal = document.getElementById("wishModal");
+  modal.classList.remove("flex");
+  modal.classList.add("hidden");
+}
+
+// Make modal functions globally accessible
+window.openWishModal = openWishModal;
+window.closeWishModal = closeWishModal;
+
+// Helper: format relative time
+function formatTimeRelative(dateString) {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now - date;
+  const diffMins = Math.floor(diffMs / 60000);
+  
+  if (diffMins < 1) return "Just now";
+  if (diffMins < 60) return `${diffMins}m ago`;
+  
+  const diffHours = Math.floor(diffMins / 60);
+  if (diffHours < 24) return `${diffHours}h ago`;
+  
+  return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+// Helper: render a single wish card markup
+function createWishCardHtml(wish) {
+  const sender = wish.sender || {};
+  const senderName = sender.fullname || "Anonymous";
+  const initials = getInitials(senderName);
+  const gradient = getGradientForName(senderName);
+  const timestamp = wish.createdAt ? formatTimeRelative(wish.createdAt) : "Just now";
+
+  const avatarHtml = sender.profile_image
+    ? `<img src="${sender.profile_image}" alt="${senderName}" class="w-10 h-10 rounded-full object-cover flex-shrink-0">`
+    : `<div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0" style="background: ${gradient}; color: white;">${initials}</div>`;
+
+  return `
+    <div class="bg-[#161b2c] border border-white/5 rounded-xl p-4 flex gap-3 items-start hover:border-white/10 transition-all font-sans">
+      ${avatarHtml}
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center justify-between gap-2">
+          <h4 class="font-bold text-slate-200 text-sm truncate">${senderName}</h4>
+          <span class="text-[11px] text-slate-500 font-semibold flex-shrink-0">${timestamp}</span>
+        </div>
+        <p class="text-slate-300 text-sm mt-1 leading-relaxed break-words">${wish.message}</p>
+      </div>
+    </div>
+  `;
+}
+
+// ── WISH WALL LOAD AND STATE ──
+async function loadWishWall() {
+  const container = document.getElementById("wishWallContainer");
+  const countSpan = document.getElementById("wishWallCountTag");
+
+  try {
+    const res = await fetch(`${API_BASE}/api/v1/users/wish/getAll`, {
+      method: "GET",
+      credentials: "include"
+    });
+
+    if (res.status === 400 || res.status === 404) {
+      container.innerHTML = `
+        <div class="col-span-full text-center p-8 bg-[#161b2c] border border-dashed border-white/10 rounded-xl text-slate-500 font-semibold">
+          No birthday wishes yet. 🎈
+        </div>
+      `;
+      countSpan.innerText = "Wishes: 0";
+      return;
+    }
+
+    if (!res.ok) throw new Error("Failed to load wishes");
+
+    const data = await res.json();
+    const wishes = data.data || [];
+
+    countSpan.innerText = `Wishes: ${wishes.length}`;
+
+    if (wishes.length === 0) {
+      container.innerHTML = `
+        <div class="col-span-full text-center p-8 bg-[#161b2c] border border-dashed border-white/10 rounded-xl text-slate-500 font-semibold">
+          No birthday wishes yet. 🎈
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = wishes.map(wish => createWishCardHtml(wish)).join("");
+
+  } catch (err) {
+    console.error("Wish wall loading error:", err);
+    container.innerHTML = `
+      <div class="col-span-full text-center p-8 bg-[#161b2c] border border-dashed border-red-500/20 rounded-xl text-red-400 font-semibold">
+        ⚠️ Failed to load your Wish Wall
+      </div>
+    `;
+  }
+}
+
+// Check if current user birthday is today
+function checkBirthdayWishWall() {
+  if (!currentUser || !currentUser.dob) return;
+
+  const today = new Date();
+  const dob = new Date(currentUser.dob);
+  
+  const isBirthday = dob.getDate() === today.getDate() && dob.getMonth() === today.getMonth();
+
+  if (isBirthday) {
+    const wishWallSection = document.getElementById("wishWallSection");
+    if (wishWallSection) {
+      wishWallSection.classList.remove("hidden");
+      loadWishWall();
+    }
+  }
+}
+
+// ── SETUP MODAL EVENT LISTENERS ──
+function setupModalEventListeners() {
+  const closeModalBtn = document.getElementById("closeModalBtn");
+  const wishModal = document.getElementById("wishModal");
+  const wishForm = document.getElementById("wishForm");
+  const messageInput = document.getElementById("wishMessageInput");
+  const charCounter = document.getElementById("charCounter");
+  const emojiButtons = document.querySelectorAll(".emoji-btn");
+
+  if (!wishModal) return;
+
+  // Close modal click
+  closeModalBtn.addEventListener("click", closeWishModal);
+
+  // Close when clicking outside content card
+  wishModal.addEventListener("click", (e) => {
+    if (e.target === wishModal) {
+      closeWishModal();
+    }
+  });
+
+  // Character counter
+  messageInput.addEventListener("input", () => {
+    charCounter.innerText = messageInput.value.length;
+  });
+
+  // Emoji shortcut click
+  emojiButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const emoji = btn.innerText;
+      const startPos = messageInput.selectionStart;
+      const endPos = messageInput.selectionEnd;
+      const text = messageInput.value;
+      
+      messageInput.value = text.substring(0, startPos) + emoji + text.substring(endPos);
+      messageInput.focus();
+      
+      const newCursorPos = startPos + emoji.length;
+      messageInput.setSelectionRange(newCursorPos, newCursorPos);
+      charCounter.innerText = messageInput.value.length;
+    });
+  });
+
+  // Wish Form submit
+  wishForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    
+    const receiverId = document.getElementById("modalReceiverId").value;
+    const message = messageInput.value.trim();
+    const sendBtn = document.getElementById("sendWishBtn");
+
+    if (!message) return;
+
+    if (message.length > 300) {
+      showToast("Message cannot exceed 300 characters ❌", true);
+      return;
+    }
+
+    sendBtn.disabled = true;
+    sendBtn.innerText = "Sending... ⏳";
+
+    try {
+      const res = await fetch(`${API_BASE}/api/v1/users/wish/add`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include",
+        body: JSON.stringify({ receiverId, message })
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        closeWishModal();
+        showToast("Birthday wish sent successfully! 🎉");
+
+        // Instantly add the wish to local Wish Wall if the recipient is the logged in user
+        const wishWallContainer = document.getElementById("wishWallContainer");
+        if (wishWallContainer) {
+          const localWish = {
+            sender: {
+              fullname: currentUser.fullname,
+              profile_image: currentUser.profile_image
+            },
+            message: message,
+            createdAt: new Date().toISOString()
+          };
+
+          const noWishesDiv = wishWallContainer.querySelector(".col-span-full");
+          if (noWishesDiv) {
+            wishWallContainer.innerHTML = "";
+          }
+
+          const tempDiv = document.createElement("div");
+          tempDiv.innerHTML = createWishCardHtml(localWish);
+          wishWallContainer.insertBefore(tempDiv.firstElementChild, wishWallContainer.firstChild);
+
+          const countSpan = document.getElementById("wishWallCountTag");
+          if (countSpan) {
+            const currentCount = wishWallContainer.children.length;
+            countSpan.innerText = `Wishes: ${currentCount}`;
+          }
+        }
+      } else {
+        throw new Error(data.message || "Failed to submit birthday wish");
+      }
+    } catch (err) {
+      console.error(err);
+      showToast(err.message || "Could not send birthday wish ❌", true);
+    } finally {
+      sendBtn.disabled = false;
+      sendBtn.innerText = "Send Wish 🚀";
+    }
   });
 }
 
@@ -332,4 +632,8 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
 });
 
 // Start checks on load
-window.addEventListener("DOMContentLoaded", checkAuthentication);
+window.addEventListener("DOMContentLoaded", () => {
+  checkAuthentication();
+  setupModalEventListeners();
+});
+

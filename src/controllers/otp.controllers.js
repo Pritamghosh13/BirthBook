@@ -73,7 +73,7 @@ const verifyOtp = asyncHandler(async(req, res) => {
     }
     
     if(record.otpExpiry < Date.now()){
-        throw new ApiError(400, "Invalid or Expired otp");
+        throw new ApiError(400, "Expired otp");
     }
 
     const compareOTP = await bcrypt.compare(otp, record.otp)
