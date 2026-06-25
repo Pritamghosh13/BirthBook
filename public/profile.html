@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Profile — BirthBook</title>
+  <link rel="stylesheet" href="profile.style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Quicksand:wght@500;600;700&family=Nunito:wght@800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Decorative Orbs -->
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
+
+  <!-- Navbar -->
+  <nav id="navbar">
+    <a href="dashboard.html" class="nav-brand">
+      <div class="brand-icon">🎉</div>
+      <span>BirthBook</span>
+    </a>
+    <div class="nav-links">
+      <a href="dashboard.html" class="nav-link">Dashboard</a>
+      <a href="profile.html" class="nav-link active">Profile</a>
+      <button id="logoutBtn" class="btn-logout">Logout</button>
+    </div>
+  </nav>
+
+  <!-- Profile Layout Container -->
+  <main class="profile-container">
+
+    <!-- Back Button -->
+    <a href="dashboard.html" class="back-link">← Back to Dashboard</a>
+
+    <!-- Toast Notification (Hidden by default) -->
+    <div id="toast" class="toast">Profile updated successfully!</div>
+
+    <div class="profile-grid">
+      
+      <!-- Left Column: Avatar & Summary -->
+      <aside class="profile-aside glass-card">
+        <div class="avatar-uploader-section">
+          <div class="profile-avatar-wrapper">
+            <img id="profileImagePreview" src="" alt="Profile Image" style="display: none;">
+            <div id="avatarFallback" class="avatar-fallback-large">BB</div>
+            
+            <!-- Upload Overlay -->
+            <label for="avatarInput" class="upload-overlay">
+              <span class="camera-icon">📷</span>
+              <span class="upload-text">Change Photo</span>
+            </label>
+          </div>
+          
+          <input type="file" id="avatarInput" accept="image/*" style="display: none;">
+          <h2 id="summaryName">Loading User...</h2>
+          <p id="summaryEmail">user@example.com</p>
+
+          <div class="avatar-controls">
+            <button id="deleteAvatarBtn" class="btn-secondary" style="display: none;">Remove Photo</button>
+          </div>
+        </div>
+
+        <div class="aside-stats">
+          <div class="aside-stat-item">
+            <span class="stat-title">Member Since</span>
+            <span class="stat-desc" id="userJoinDate">Loading...</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Right Column: Forms -->
+      <section class="profile-forms-area">
+        
+        <!-- Form: Edit Details -->
+        <div class="form-card glass-card">
+          <h3>Personal Details</h3>
+          <p class="form-card-desc">Update your name, birthday info, and contact number.</p>
+          
+          <form id="detailsForm">
+            <div class="form-group">
+              <label for="fullname">Full Name</label>
+              <input type="text" id="fullname" placeholder="Enter your full name" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="email" class="label-disabled">Email Address (Locked)</label>
+              <input type="email" id="email" disabled>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="dob" class="label-disabled">Date of Birth (Locked)</label>
+                <input type="date" id="dob" disabled>
+              </div>
+              <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" placeholder="Enter phone number" required>
+              </div>
+            </div>
+
+            <button type="submit" id="saveDetailsBtn" class="btn-primary">Save Personal Details</button>
+          </form>
+        </div>
+
+        <!-- Form: Change Password -->
+        <div class="form-card glass-card">
+          <h3>Security & Password</h3>
+          <p class="form-card-desc">Keep your account secure by changing your password periodically.</p>
+          
+          <form id="passwordForm">
+            <div class="form-group">
+              <label for="oldpassword">Current Password</label>
+              <input type="password" id="oldpassword" placeholder="Enter current password" required>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="newPassword">New Password</label>
+                <input type="password" id="newPassword" placeholder="Minimum 6 characters" required>
+              </div>
+              <div class="form-group">
+                <label for="confirmNewPassword">Confirm New Password</label>
+                <input type="password" id="confirmNewPassword" placeholder="Repeat new password" required>
+              </div>
+            </div>
+
+            <button type="submit" id="savePasswordBtn" class="btn-primary">Update Password</button>
+          </form>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="form-card glass-card danger-card">
+          <h3>Danger Zone</h3>
+          <p class="form-card-desc">Permanently remove your account and all associated birthday records from BirthBook. This action is irreversible.</p>
+          <button id="deleteAccountBtn" class="btn-danger">Delete Account</button>
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <footer>
+    <p>Created with <span>💖</span> by Pritam Ghosh. All rights reserved.</p>
+  </footer>
+
+  <script src="profile.script.js"></script>
+</body>
+</html>

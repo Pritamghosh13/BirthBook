@@ -1,6 +1,7 @@
 import { Router } from "express";
-import { registerUser, userDetails, userLogin, userLogout, uploadProfileImage, deleteProfileImage, changePassword, forgetUserPassword, deleteUserAccount } from "../controllers/user.controllers.js";
+import { registerUser, userDetails, userLogin, userLogout, uploadProfileImage, deleteProfileImage, changePassword, forgetUserPassword, deleteUserAccount, updateProfile } from "../controllers/user.controllers.js";
 import { verifyJWT } from "../middleWare/auth.middleware.js";
+import { ApiResponse } from "../utilis/apiResponse.js";
 import { sendOtp, verifyOtp } from "../controllers/otp.controllers.js";
 import { upload } from "../middleWare/multer.middleware.js";
 import { getBirthInThisMonth } from "../controllers/birrth.controllers.js";
@@ -26,6 +27,12 @@ router.route("/sendotp").post(sendOtp)
 
 router.route("/verifyotp").post(verifyOtp)
 
+
+router.route("/me").get(verifyJWT, (req, res) => {
+    return res.status(200).json(new ApiResponse(200, req.user, "Current user fetched successfully"));
+});
+
+router.route("/profile/update").put(verifyJWT, updateProfile)
 
 router.route("/profile/upload").post(verifyJWT, upload.single("profilePic"), uploadProfileImage)
 

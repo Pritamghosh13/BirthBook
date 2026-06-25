@@ -11,7 +11,7 @@ const getBirthInThisMonth = asyncHandler(async (req, res) => {
     const futureDate = new Date();
     futureDate.setDate(today.getDate() + days)
 
-    const users = await User.find().select("-refreshToken -profile_image -public_id -password -phone_number -email -isVerified")
+    const users = await User.find().select("-refreshToken -profile_image -public_id -password -phone_number -isVerified")
 
     if(users.length === 0){
         throw new ApiError(404, "Users not found in DB")
@@ -46,6 +46,38 @@ const getBirthInThisMonth = asyncHandler(async (req, res) => {
 
 
 
+// const ageCalculate = (dob) => {
+//     const birthday = new Date(dob);
+//     const today = new Date();
+
+//     const age = today.getFullYear() - birthday.getFullYear();
+
+//     const birthMonth = today.getMonth() - birthday.getMonth();
+
+//     if(birthMonth < 0 ||(( birthMonth === 0) &&(today.getDay() < birthday.getDay()))){
+//         age--;
+//     }
+
+//     return age;
+// }
 
 
-export {getBirthInThisMonth}
+// const getAge = asyncHandler(async(req, res) => {
+
+//     const users = await User.find().select("-refreshToken -profile_image -public_id -password -phone_number -isVerified")
+
+//     if (!users) {
+//         throw new ApiError(404, "Users data not fetched successfully")
+//     }
+
+//     users.forEach()
+
+// })
+
+
+
+
+
+
+export {getBirthInThisMonth,
+}

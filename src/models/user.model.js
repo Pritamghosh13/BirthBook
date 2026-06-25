@@ -60,6 +60,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: ""
 
+    },
+
+    age: {
+        type: String,
     }
 
 
