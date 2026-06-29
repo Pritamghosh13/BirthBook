@@ -1,7 +1,5 @@
 // ── API BASE ROUTE DETECTION ──
-const API_BASE = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-  ? (window.location.port === "8000" ? "" : "http://localhost:8000")
-  : "http://localhost:8000";
+const API_BASE_URL = window.API_BASE_URL || "https://birthbook.onrender.com";
 
 let currentUser = null;
 
@@ -46,7 +44,7 @@ function showToast(message, isError = false) {
 // ── AUTH GUARD ──
 async function checkAuthentication() {
   try {
-    const res = await fetch(`${API_BASE}/api/v1/users/me`, {
+    const res = await fetch(`${API_BASE_URL}/api/v1/users/me`, {
       method: "GET",
       credentials: "include",
     });
@@ -127,7 +125,7 @@ document.getElementById("detailsForm").addEventListener("submit", async (e) => {
   const phone_number = document.getElementById("phone").value;
 
   try {
-    const res = await fetch(`${API_BASE}/api/v1/users/profile/update`, {
+    const res = await fetch(`${API_BASE_URL}/api/v1/users/profile/update`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json"
@@ -175,7 +173,7 @@ document.getElementById("avatarInput").addEventListener("change", async (e) => {
   showToast("Uploading new photo... ⏳");
 
   try {
-    const res = await fetch(`${API_BASE}/api/v1/users/profile/upload`, {
+    const res = await fetch(`${API_BASE_URL}/api/v1/users/profile/upload`, {
       method: "POST",
       credentials: "include",
       body: formData
@@ -202,7 +200,7 @@ document.getElementById("deleteAvatarBtn").addEventListener("click", async () =>
   showToast("Removing photo... ⏳");
 
   try {
-    const res = await fetch(`${API_BASE}/api/v1/users/profile/delete-image`, {
+    const res = await fetch(`${API_BASE_URL}/api/v1/users/profile/delete-image`, {
       method: "DELETE",
       credentials: "include"
     });
@@ -243,7 +241,7 @@ document.getElementById("passwordForm").addEventListener("submit", async (e) => 
   btn.innerText = "Updating...";
 
   try {
-    const res = await fetch(`${API_BASE}/api/v1/users/change-pass`, {
+    const res = await fetch(`${API_BASE_URL}/api/v1/users/change-pass`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -277,7 +275,7 @@ document.getElementById("deleteAccountBtn").addEventListener("click", async () =
   if (!confirm2) return;
 
   try {
-    const res = await fetch(`${API_BASE}/api/v1/users/delete/account`, {
+    const res = await fetch(`${API_BASE_URL}/api/v1/users/delete/account`, {
       method: "POST",
       credentials: "include"
     });
@@ -298,7 +296,7 @@ document.getElementById("deleteAccountBtn").addEventListener("click", async () =
 // Helper: Refresh user info from server
 async function refreshCurrentUserData() {
   try {
-    const res = await fetch(`${API_BASE}/api/v1/users/me`, {
+    const res = await fetch(`${API_BASE_URL}/api/v1/users/me`, {
       method: "GET",
       credentials: "include"
     });
@@ -318,7 +316,7 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
   if (!confirm("Are you sure you want to log out?")) return;
 
   try {
-    const res = await fetch(`${API_BASE}/api/v1/users/logout`, {
+    const res = await fetch(`${API_BASE_URL}/api/v1/users/logout`, {
       method: "POST",
       credentials: "include"
     });
@@ -407,7 +405,7 @@ async function loadWishWall() {
   const countSpan = document.getElementById("wishWallCountTag");
 
   try {
-    const res = await fetch(`${API_BASE}/api/v1/users/wish/getAll`, {
+    const res = await fetch(`${API_BASE_URL}/api/v1/users/wish/getAll`, {
       method: "GET",
       credentials: "include"
     });

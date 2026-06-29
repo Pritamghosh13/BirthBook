@@ -1,7 +1,5 @@
 // ── API BASE ROUTE DETECTION ──
-const API_BASE = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-  ? (window.location.port === "8000" ? "" : "http://localhost:8000")
-  : "http://localhost:8000";
+const API_BASE_URL = window.API_BASE_URL || "https://birthbook.onrender.com";
 
 let currentUser = null;
 let allUsers = [];
@@ -63,7 +61,7 @@ function getGradientForName(name) {
 // ── AUTH GUARD ──
 async function checkAuthentication() {
   try {
-    const res = await fetch(`${API_BASE}/api/v1/users/me`, {
+    const res = await fetch(`${API_BASE_URL}/api/v1/users/me`, {
       method: "GET",
       credentials: "include",
     });
@@ -137,7 +135,7 @@ async function fetchUpcomingBirthdays() {
   const countSpan = document.getElementById("upcomingMonthCount");
 
   try {
-    const res = await fetch(`${API_BASE}/api/v1/users/birth/month`, {
+    const res = await fetch(`${API_BASE_URL}/api/v1/users/birth/month`, {
       method: "GET",
       credentials: "include"
     });
@@ -198,7 +196,7 @@ async function fetchAllUsers() {
   const allCountTag = document.getElementById("allFriendsCountTag");
 
   try {
-    const res = await fetch(`${API_BASE}/api/v1/users/userinfo`, {
+    const res = await fetch(`${API_BASE_URL}/api/v1/users/userinfo`, {
       method: "GET",
       credentials: "include"
     });
@@ -415,7 +413,7 @@ async function loadWishWall() {
   const countSpan = document.getElementById("wishWallCountTag");
 
   try {
-    const res = await fetch(`${API_BASE}/api/v1/users/wish/getAll`, {
+    const res = await fetch(`${API_BASE_URL}/api/v1/users/wish/getAll`, {
       method: "GET",
       credentials: "include"
     });
@@ -538,7 +536,7 @@ function setupModalEventListeners() {
     sendBtn.innerText = "Sending... ⏳";
 
     try {
-      const res = await fetch(`${API_BASE}/api/v1/users/wish/add`, {
+      const res = await fetch(`${API_BASE_URL}/api/v1/users/wish/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -615,7 +613,7 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
   if (!confirm("Are you sure you want to log out?")) return;
 
   try {
-    const res = await fetch(`${API_BASE}/api/v1/users/logout`, {
+    const res = await fetch(`${API_BASE_URL}/api/v1/users/logout`, {
       method: "POST",
       credentials: "include"
     });
