@@ -82,18 +82,15 @@ const verifyOtp = asyncHandler(async(req, res) => {
         throw new ApiError(400, "Invalid OTP");
     }
 
-    await Otp.deleteOne({email});
+    record.otpVerify = true;
+    await record.save();
 
-    // await Otp.updateOne({email}, {
-    //     otpVerify: true
-    // })
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+        existingUser.isVerified = true;
+        await existingUser.save({ validateBeforeSave: false });
+    }
 
-    
-    await User.updateOne({email}, {
-        isVerified: true,
-    })
-
-     
     return res.status(200)
     .json(new ApiResponse(200, {}, "OTP verify successfully"))
 })
