@@ -1,4 +1,5 @@
 import { User } from "../models/user.model.js";
+import { Otp } from "../models/otp.model.js";
 import { asyncHandler } from "../utilis/asyncHandeller.js";
 import { ApiError } from "../utilis/apiError.js"
 import { ApiResponse } from "../utilis/apiResponse.js"
@@ -72,6 +73,16 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new ApiError(409, "User with this email already exists")
     }
 
+    const normalizedEmail = email.trim().toLowerCase();
+    const verifiedOtp = await Otp.findOne({
+        email: normalizedEmail,
+        otpVerify: true,
+    });
+
+    if (!verifiedOtp) {
+        throw new ApiError(400, "Please verify your email OTP before registering");
+    }
+
 
     // const user = await User.create({
     //     fullname,
@@ -83,8 +94,17 @@ const registerUser = asyncHandler(async (req, res) => {
     // })
 
 
-    const user = new User(req.body)
+    const user = new User({
+        fullname,
+        email: normalizedEmail,
+        password,
+        phone_number,
+        dob,
+        isVerified: true,
+    })
     await user.save()
+
+    await Otp.deleteMany({ email: normalizedEmail });
 
     const createdUser = await User.findById(user._id).select("-password -phone_number")
 
