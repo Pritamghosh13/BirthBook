@@ -619,7 +619,7 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
     });
 
     if (res.ok) {
-      window.location.href = "landing_page.html";
+      window.location.href = "index.html";
     } else {
       alert("Failed to logout. Please try again.");
     }

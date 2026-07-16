@@ -283,7 +283,7 @@ document.getElementById("deleteAccountBtn").addEventListener("click", async () =
     const data = await res.json();
     if (res.ok && data.success) {
       alert("Your account has been deleted successfully. Goodbye!");
-      window.location.href = "landing_page.html";
+      window.location.href = "index.html";
     } else {
       throw new Error(data.message || "Account deletion failed");
     }
