@@ -72,7 +72,7 @@ function populateProfile() {
   // Header / Aside info
   document.getElementById("summaryName").innerText = currentUser.fullname;
   document.getElementById("summaryEmail").innerText = currentUser.email;
-  
+
   if (currentUser.createdAt) {
     document.getElementById("userJoinDate").innerText = new Date(currentUser.createdAt).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -222,7 +222,7 @@ document.getElementById("deleteAvatarBtn").addEventListener("click", async () =>
 document.getElementById("passwordForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const btn = document.getElementById("savePasswordBtn");
-  
+
   const oldpassword = document.getElementById("oldpassword").value;
   const newPassword = document.getElementById("newPassword").value;
   const confirmNewPassword = document.getElementById("confirmNewPassword").value;
@@ -322,7 +322,7 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
     });
 
     if (res.ok) {
-      window.location.href = "landing_page.html";
+      window.location.href = "index.html";
     } else {
       alert("Failed to logout. Please try again.");
     }
@@ -341,7 +341,7 @@ function checkBirthdayWishWall() {
 
   const today = new Date();
   const dob = new Date(currentUser.dob);
-  
+
   const isBirthday = dob.getDate() === today.getDate() && dob.getMonth() === today.getMonth();
 
   const wishWallSection = document.getElementById("wishWallSection");
@@ -363,13 +363,13 @@ function formatTimeRelative(dateString) {
   const now = new Date();
   const diffMs = now - date;
   const diffMins = Math.floor(diffMs / 60000);
-  
+
   if (diffMins < 1) return "Just now";
   if (diffMins < 60) return `${diffMins}m ago`;
-  
+
   const diffHours = Math.floor(diffMins / 60);
   if (diffHours < 24) return `${diffHours}h ago`;
-  
+
   return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 
