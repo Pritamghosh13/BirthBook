@@ -18,7 +18,8 @@ app.use(cors({
       origin.startsWith("https://127.0.0.1:") ||
       origin === "http://localhost" ||
       origin === "http://127.0.0.1" ||
-      origin === "https://birthbook.onrender.com"
+      origin === "https://birthbook.onrender.com" ||
+      origin === "https://birth-book.vercel.app"
     ) {
       return callback(null, true);
     }
