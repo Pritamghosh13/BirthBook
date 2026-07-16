@@ -24,9 +24,34 @@ BirthBook is a web application that helps users store and track important birthd
 
 ---
 
+## ⚙️ Installation & Setup
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Pritamghosh13/BirthBook.git
+   cd BirthBook
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Environment Variables**
+   Create a `.env` file in the root directory based on the provided `.env.sample` file:
+   ```bash
+   cp .env.sample .env
+   ```
+   Fill in your MongoDB URI, JWT Secrets, Cloudinary keys, and Nodemailer credentials.
+
+4. **Run the application**
+   ```bash
+   npm run dev
+   ```
+   The backend will start running on port 8000.
+
+---
+
 ## Author
 
 - **Pritam Ghosh**
-
-
-

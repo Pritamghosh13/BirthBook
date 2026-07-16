@@ -4,25 +4,35 @@ import { otpEmailTemplate } from "./tamplates/otp.mailer.js";
 import { birthdayEmailTemplate } from "./tamplates/Birthday.mailer.js";
 import dotenv from "dotenv"
 
-dotenv.config({path: "./.env"})
+dotenv.config({ path: "./.env" })
 
 
 // welcome
-export const sendWelcomeEmail = (email, name) => {
-    console.log("Email send successfully");
-    return transporter.sendMail({
-    from: process.env.EMAIL_USER,
-    to: email,
-    subject: "🎉 Welcome to BirthBook",
-    html: welcomeEmailTemplate(name),
-  });
-  
+export const sendWelcomeEmail = async (email, name) => {
+  try {
+    console.log("Before sendMail");
+
+    const info = await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "🎉 Welcome to BirthBook",
+      html: welcomeEmailTemplate(name),
+    });
+
+    console.log("After sendMail, send successfully");
+    console.log(info);
+
+    return info;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
 };
 
 // otp
 export const sendOtpEmail = (email, otp) => {
-    console.log("Email send successfully");
-    return transporter.sendMail({
+  console.log("Email send successfully");
+  return transporter.sendMail({
     from: process.env.EMAIL_USER,
     to: email,
     subject: "🔐 Verify your email",
@@ -32,8 +42,8 @@ export const sendOtpEmail = (email, otp) => {
 
 // birthday
 export const sendBirthdayEmail = (email, name) => {
-    console.log("Email send successfully");
-    return transporter.sendMail({
+  console.log("Email send successfully");
+  return transporter.sendMail({
     from: process.env.EMAIL_USER,
     to: email,
     subject: "🎂 Happy Birthday!",
