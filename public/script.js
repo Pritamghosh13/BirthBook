@@ -123,7 +123,7 @@
 
 
 // ── CONFIGURATION & GLOBAL STATE ────────────────────────────────────────────
-const API_BASE_URL = window.API_BASE_URL || "https://birthbook.onrender.com";
+
 
 // ── LOG IN FLOW ─────────────────────────────────────────────────────────────
 const log_in_form = document.getElementById("loginForm");

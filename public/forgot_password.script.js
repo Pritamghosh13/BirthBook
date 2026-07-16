@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  const API_BASE_URL = window.API_BASE_URL || "https://birthbook.onrender.com";
+
 
   const $ = (id) => document.getElementById(id);
   const setValid   = (el) => { if (el) { el.classList.remove('invalid'); el.classList.add('valid'); } };
