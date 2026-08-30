@@ -37,6 +37,14 @@ app.use(cookieParser())
 app.use("/api/v1/users", router)
 
 
+app.get("/health", (req, res) => {
+    return res.status(200)
+    .json({
+        status: "OK"
+    })
+})
+
+
 // Global Error Handling Middleware
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || err.statuscode || 500;
